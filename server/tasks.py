@@ -1,15 +1,20 @@
+import os
+
 from newsletter.celery import app
 from django.core.mail import send_mail
 from .models import Message
 import requests
 import datetime
 from datetime import datetime, timezone
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 @app.task
 def start_newsletter(payload, end_date):
     headers = {
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTkzMzA5MjAsImlzcyI6ImZhYnJpcXVlIiwibmFtZSI6Imh0dHBzOi8vdC5tZS9TaW5vMG9uIn0.TBpfsuntfLE48Xf9320uyQ-vCAIEOOU2lW8TxcXt82A",
+        "Authorization": f"Bearer {os.environ.get('JWT_TOKEN')}",
         "Content-Type": "application/json",
         "Connection": "keep-alive",
         "Accept": "*/*"
