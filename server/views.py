@@ -23,12 +23,13 @@ class NewsletterCreateView(generics.CreateAPIView):
         print(serializer.data)
         for i in serializer.data['clients']:
             client = Client.objects.get(id=i)
-            message = Message.objects.create(status="NO", client=client, newsletter__id=serializer.data['id'])
+            message = Message.objects.create(status="NO", client=client, newsletter_id=serializer.data['id'])
             payload = {
               "id": message.pk,
               "phone": client.get_number(),
               "text": serializer.data['text']
             }
+            print(serializer.data['end_date'])
             start_newsletter.apply_async(args=(payload, serializer.data['end_date']), eta=serializer.data['start_date'])
             print('end')
         return Response(serializer.data, status=status.HTTP_201_CREATED)

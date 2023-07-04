@@ -3,6 +3,7 @@ from django.core.mail import send_mail
 from .models import Message
 import requests
 import datetime
+from datetime import datetime, timezone
 
 
 @app.task
@@ -14,7 +15,9 @@ def start_newsletter(payload, end_date):
         "Accept": "*/*"
     }
     url = f'https://probe.fbrq.cloud/v1/send/{payload["id"]}'
-    if datetime.datetime.now() < end_date:
+    current_datetime = datetime.now(timezone.utc)
+    end_datetime = datetime.fromisoformat(end_date)
+    if current_datetime < end_datetime:
         data = requests.post(url, json=payload, headers=headers)
         print(data.status_code)
         if data.status_code == 200:
